@@ -1,12 +1,19 @@
 import pygame
 from start_searching_button import Start_Searching_Button
+from input_box import TextInputBox
 import openpyxl
 import pandas as pd
+clock = pygame.time.Clock()
 
 # Create a new Excel workbook
 workbook = openpyxl.Workbook()
 # Select the default sheet (usually named 'Sheet')
 sheet = workbook.active
+
+input_rect = pygame.Rect(200,200,200,72)
+text = ""
+input_active = True
+
 
 # set up pygame modules
 pygame.init()
@@ -32,31 +39,35 @@ display_name = my_font.render(name, True, (255, 255, 255))
 
 # The loop will carry on until the user exits the game (e.g. clicks the close button).
 run = True
+finish_input_case = False
 
 # -------- Main Program Loop -----------
 while run:
+    clock.tick(60)
     # --- Main event loop
     title_screen = title_font.render("JSTOR Law Database", True, (255, 255, 255))
     for event in pygame.event.get():
         if event.type == pygame.MOUSEBUTTONDOWN and not end_title_click:
             pos = pygame.mouse.get_pos()
             if s.rect.collidepoint(pos):
+                finish_input_case = False
                 end_title_click = True
-        if event.type == pygame.KEYDOWN:
-
-            # Check for backspace
-            if event.key == pygame.K_BACKSPACE:
-
-                # get text input from 0 to -1 i.e. end.
-                user_text = user_text[:-1]
-
-                # Unicode standard is used for string
-            # formation
+        elif event.type == pygame.MOUSEBUTTONDOWN:
+            input_active = True
+            text = ""
+        elif event.type == pygame.KEYDOWN and input_active:
+            if event.key == pygame.K_RETURN:
+                input_active = False
+            elif event.key == pygame.K_BACKSPACE:
+                text = text[:-1]
             else:
-                user_text += event.unicode
+                text += event.unicode
+
         if end_title_click:
             input_case_name = input("Case Name: ")
             display_input_case_name = my_font.render(input_case_name, True, (255, 255, 255))
+            # Put an input box next to the display input case name, and do for the rest of the inputs
+            # once the number of cases ends, and the person hits enter, it goes back to the title screen
             input_ruling = input("Plantiff or Defense")
             display_input_ruling = my_font.render(input_ruling, True, (255, 255, 255))
             input_case_type = input("Criminal or Civil")
@@ -69,6 +80,7 @@ while run:
             if input_ruling_court == "Circuit":
                 circuit_name = input("Which Federal Circuit did this ruling take place?")
                 display_circuit_name = my_font.render(circuit_name, True, (255, 255, 255))
+            finish_input_case = True
             data = [
                 ["Case Name", "Ruling", "Case Type", "Civil Case Type", "Ruling Court", "Circuit Name"],
                 [input_case_name, input_ruling, input_case_type, civil_case_type, input_ruling_court, circuit_name]
@@ -80,6 +92,7 @@ while run:
             display_case_spreadsheet = (case_excel_spreadsheet.xlsx, True, (255, 255, 255))
 
 
+
         if event.type == pygame.QUIT:  # If user clicked close
             run = False
 
@@ -88,17 +101,25 @@ while run:
         screen.blit(title_screen, (35, 75))
         screen.blit(s.image, s.rect)
 
-    if end_title_click and not spreadsheet_created:
-        screen.fill((100, 100, 100))
-        screen.blit(display_input_case_name, (0, 10))
-        screen.blit(display_input_ruling, (0, 20))
-        screen.blit(display_input_case_type, (0, 30))
-        screen.blit(display_civil_case_typed, (0, 40))
-        screen.blit(display_input_ruling_court, (0, 50))
-        screen.blit(display_circuit_name, (0, 60))
+    if end_title_click:
+        screen.fill(0, 0, 0)
+        text_surf = my_font.render(text, True, (255, 0, 0))
+        screen.blit(text_surf, text_surf.get_rect(center=screen.get_rect().center))
+        pygame.display.flip()
+        # screen.fill((100, 100, 100))
+        # screen.blit(display_input_case_name, (0, 10))
+        # screen.blit(display_input_ruling, (0, 20))
+        # screen.blit(display_input_case_type, (0, 30))
+        # screen.blit(display_civil_case_typed, (0, 40))
+        # screen.blit(display_input_ruling_court, (0, 50))
+        # screen.blit(display_circuit_name, (0, 60))
 
     if end_title_click and spreadsheet_created:
-        screen.blit
+        screen.blit(display_case_spreadsheet)
+    if finish_input_case:
+        #Give an option to play a "game"
+        # Give an option to view the spreadsheet
+        # Give an option to add another case
     pygame.display.update()
 
 # Once we have exited the main program loop we can stop the game engine:
