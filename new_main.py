@@ -3,6 +3,7 @@ from start_searching_button import Start_Searching_Button
 from input_box import TextInputBox
 import openpyxl
 import pandas as pd
+
 clock = pygame.time.Clock()
 
 # Create a new Excel workbook
@@ -11,6 +12,7 @@ workbook = openpyxl.Workbook()
 sheet = workbook.active
 
 input_rect = pygame.Rect(200,200,200,72)
+color = pygame.Color('lightskyblue3')
 text = ""
 input_active = True
 
@@ -62,16 +64,18 @@ while run:
                 text = text[:-1]
             else:
                 text += event.unicode
+        text_surface = my_font.render(text, True, (255, 255, 255))
+        pygame.draw.rect(screen color, input_rect, 2)
 
         if end_title_click:
-            input_case_name = input("Case Name: ")
-            display_input_case_name = my_font.render(input_case_name, True, (255, 255, 255))
+            input_case_name = my_font.render("Case Name: ", True, (255, 255, 255))
+            case_input_rect = pygame.Rect(200, 200, 200, 72)
+            display_input_ruling = my_font.render("Plantiff or Defense", True, (255, 255, 255))
+            ruling_input_rect = pygame.Rect(#input random numbers later)
             # Put an input box next to the display input case name, and do for the rest of the inputs
             # once the number of cases ends, and the person hits enter, it goes back to the title screen
-            input_ruling = input("Plantiff or Defense")
-            display_input_ruling = my_font.render(input_ruling, True, (255, 255, 255))
-            input_case_type = input("Criminal or Civil")
-            display_input_case_type = my_font.render(input_case_type, True, (255, 255, 255))
+            display_input_case_type = my_font.render("Criminal or Civil", True, (255, 255, 255))
+            # If the case type that is in the input rectangle appears as Civil, then write that here.
             if input_case_type == "Civil":
                 civil_case_type = input("What sector of law is this?")
                 display_civil_case_typed = my_font.render(civil_case_type, True, (255, 255, 255))
@@ -83,7 +87,7 @@ while run:
             finish_input_case = True
             data = [
                 ["Case Name", "Ruling", "Case Type", "Civil Case Type", "Ruling Court", "Circuit Name"],
-                [input_case_name, input_ruling, input_case_type, civil_case_type, input_ruling_court, circuit_name]
+                [case_input_rect, input_ruling, input_case_type, civil_case_type, input_ruling_court, circuit_name]
             ]
             for row in data:
                 sheet.append(row)
@@ -103,9 +107,9 @@ while run:
 
     if end_title_click:
         screen.fill(0, 0, 0)
-        text_surf = my_font.render(text, True, (255, 0, 0))
-        screen.blit(text_surf, text_surf.get_rect(center=screen.get_rect().center))
+        screen.blit(text_surface, (200, 200))
         pygame.display.flip()
+        screen.blit()
         # screen.fill((100, 100, 100))
         # screen.blit(display_input_case_name, (0, 10))
         # screen.blit(display_input_ruling, (0, 20))
