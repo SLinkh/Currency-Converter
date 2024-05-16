@@ -1,6 +1,10 @@
 import pygame
 import openpyxl
 
+workbook = openpyxl.Workbook()
+# Select the default sheet (usually named 'Sheet')
+sheet = workbook.active
+
 class View_Case_Button:
     def __init__(self, x, y):
         self.x = x
@@ -21,4 +25,4 @@ class View_Case_Button:
         # Fix these errors
         for row in data:
             sheet.append(row)
-        case_spreadsheet.save(case_excel_spreadsheet.xlsx)
+        case_spreadsheet.save(sheet.xlsx)

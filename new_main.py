@@ -32,6 +32,7 @@ size = (400, 300)
 screen = pygame.display.set_mode(size)
 end_title_click = False
 name = "JSTOR Law Database"
+number_of_enter = 0
 
 # Setting up Main Screen to Set up Start Searching Button
 
@@ -42,6 +43,53 @@ display_name = my_font.render(name, True, (255, 255, 255))
 # The loop will carry on until the user exits the game (e.g. clicks the close button).
 run = True
 finish_input_case = False
+
+#Functions for the loop
+
+def create_spreadsheet():
+
+def case_name():
+    case_input_rect = pygame.Rect(100, 200, 10, 70)
+    pygame.draw.rect(screen, color, case_input_rect, 2)
+    name_text_surface = my_font.render(text, True, (255, 255, 255))
+    return name_text_surface and case_input_rect
+
+
+def input_data_in_spreadsheet():
+
+def case_ruling():
+    case_ruling_rect = pygame.Rect(100, 200, 10, 90)
+    pygame.draw.rect(screen, color, case_ruling_rect, 2)
+    ruling_text_surface = my_font.render(text, True, (255, 255, 255))
+    return ruling_text_surface and case_ruling_rect
+
+def case_type():
+    case_type_rect = pygame.Rect(100, 200, 10, 110)
+    pygame.draw.rect(screen, color, case_type_rect, 2)
+    case_type_text_surface = my_font.render(text, True, (255, 255, 255))
+    if case_type_text_surface == "Civil":
+        civil_case_type = pygame.Rect(100, 200, 10, 130)
+        pygame.draw.rect(screen, color, civil_case_type, 2)
+        civil_case_text_surface = my_font.render(text, True, (255, 255, 255))
+    else: # Could also create different functions within functions and then just important these functions within the parameters
+        criminal_case_type = pygame.Rect(100, 200, 10, 130)
+        pygame.draw.rect(screen, color, criminal_case_type, 2)
+        criminal_case_text_surface = my_font.render(text, True, (255, 255, 255))
+    return case_type_rect and case_type_text_surface and civil_case_text_surface and civil_case_type or criminal_case_text_surface and criminal_case_type
+
+def ruling_court():
+    ruling_court_rect = pygame.Rect(100, 200, 10, 150)
+    pygame.draw.rect(screen, color, ruling_court_rect, 2)
+    ruling_court_text_surface = my_font.render(text, True, (255, 255, 255))
+    return ruling_court_rect and ruling_court_text_surface
+
+
+def circuit_name():
+    circuit_name = pygame.Rect(100, 200, 10, 170)
+
+
+
+
 
 # -------- Main Program Loop -----------
 while run:
@@ -54,12 +102,14 @@ while run:
             if s.rect.collidepoint(pos):
                 finish_input_case = False
                 end_title_click = True
+            if
         elif event.type == pygame.MOUSEBUTTONDOWN:
             input_active = True
             text = ""
         elif event.type == pygame.KEYDOWN and input_active:
             if event.key == pygame.K_RETURN:
                 input_active = False
+                number_of_enter += 1
             elif event.key == pygame.K_BACKSPACE:
                 text = text[:-1]
             else:
@@ -68,22 +118,35 @@ while run:
         pygame.draw.rect(screen color, input_rect, 2)
 
         if end_title_click:
-            input_case_name = my_font.render("Case Name: ", True, (255, 255, 255))
-            case_input_rect = pygame.Rect(200, 200, 200, 72)
-            display_input_ruling = my_font.render("Plantiff or Defense", True, (255, 255, 255))
-            ruling_input_rect = pygame.Rect(#input random numbers later)
+            if case_input_rect.collidepoint(pos):
+                case_name()
+
+            if number_of_enter == 0:
+                input_case_name = my_font.render("Case Name: ", True, (255, 255, 255))
+                case_input_rect = pygame.Rect(200, 200, 200, 72)
+            if number_of_enter == 1:
+                display_input_ruling = my_font.render("Plantiff or Defense", True, (255, 255, 255))
+                ruling_input_rect = pygame.Rect(200, 200, 100, 72)
+            if number_of_enter == 2:
+                display_input_case_type = my_font.render("Criminal or Civil", True, (255, 255, 255))
+                input_case_type = pygame.Rect(200, 200, 50, 72)
             # Put an input box next to the display input case name, and do for the rest of the inputs
             # once the number of cases ends, and the person hits enter, it goes back to the title screen
-            display_input_case_type = my_font.render("Criminal or Civil", True, (255, 255, 255))
             # If the case type that is in the input rectangle appears as Civil, then write that here.
-            if input_case_type == "Civil":
-                civil_case_type = input("What sector of law is this?")
-                display_civil_case_typed = my_font.render(civil_case_type, True, (255, 255, 255))
+            if number_of_enter == 3 and input_case_type == "Civil":
+                    civil_case_type = input("What sector of law is this?")
+                    display_civil_case_typed = my_font.render(civil_case_type, True, (255, 255, 255))
+            if number_of_enter and input_case_type != "Civil"
+
+                if input_case_type != "Civil":
+                    display_civil_case_typed = my_font.render("", True, (255, 255, 255))
             input_ruling_court = input("What type of court was this ruling in: Supreme, Circuit, or Court of Appeals?")
             display_input_ruling_court = my_font.render(input_ruling_court, True, (255, 255, 255))
-            if input_ruling_court == "Circuit":
+            if input_ruling_court == "Circuit" or "circuit" or "CIRCUIT":
                 circuit_name = input("Which Federal Circuit did this ruling take place?")
                 display_circuit_name = my_font.render(circuit_name, True, (255, 255, 255))
+            else:
+                display_circuit_name = my_font.render("", True, (255, 255, 255))
             finish_input_case = True
             data = [
                 ["Case Name", "Ruling", "Case Type", "Civil Case Type", "Ruling Court", "Circuit Name"],
@@ -91,9 +154,10 @@ while run:
             ]
             for row in data:
                 sheet.append(row)
-            workbook.save(case_excel_spreadsheet.xlsx)
+            workbook.save(sheet.xlsx)
             spreadsheet_created = True
-            display_case_spreadsheet = (case_excel_spreadsheet.xlsx, True, (255, 255, 255))
+            display_case_spreadsheet = (sheet.xlsx, True, (255, 255, 255))
+            number_of_enter = 0
 
 
 
@@ -106,7 +170,7 @@ while run:
         screen.blit(s.image, s.rect)
 
     if end_title_click:
-        screen.fill(0, 0, 0)
+        screen.fill((0, 0, 0))
         screen.blit(text_surface, (200, 200))
         pygame.display.flip()
         screen.blit()
