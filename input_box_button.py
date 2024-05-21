@@ -6,4 +6,5 @@ class Input_Box_Button:
         self.y = y
         self.image = pygame.image.load('Input New Law Case Image.png')
         self.rect = pygame.Rect(self.x, self.y)
-    def collide_point
+    def collide_point(self, pos):
+        if
