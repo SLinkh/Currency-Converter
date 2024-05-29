@@ -6,4 +6,6 @@ class Input_Done_Button:
         self.y = y
         self.image = pygame.image.load("Input Done Button.png")
         self.rect = pygame.Rect(self.x, self.y)
+        self.mouse_pos = pygame.mouse.get_pos()
+
 

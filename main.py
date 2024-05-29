@@ -5,6 +5,7 @@ import openpyxl
 import pandas as pd
 from input_box_button import Input_Box_Button
 from view_case_button import View_Case_Button
+from input_done import Input_Done
 
 clock = pygame.time.Clock()
 
@@ -29,6 +30,17 @@ title_font = pygame.font.SysFont('Arial', 35)
 pygame.display.set_caption("AP CSP Pygame!")
 s = Start_Searching_Button(135, 200)
 i = Input_Box_Button(135, 200)
+id = Input_Done(100, 190) # Insert the random numbers
+
+
+case_input_box = TextInputBox(100, 200, 10, my_font)
+case_ruling_input = TextInputBox(100, 220, 10, my_font)
+criminal_or_civil_input = TextInputBox(100, 240, 10, my_font)
+specify_case_type_input = TextInputBox(100, 260, 10, my_font)
+ruling_court_input = TextInputBox(100, 280, 10, my_font)
+circuit_name_input = TextInputBox(100, 300, 10, my_font)
+
+
 v = View_Case_Button(135, 220)
 spreadsheet_created = False
 
@@ -62,73 +74,57 @@ specify_case_type = my_font.render("What type of criminal or civil case is this 
 ruling_court = my_font.render("What was the ruling court in this case? ", True, (255, 255, 255))
 circuit_name = my_font.render("What circuit did this case take place in? ", True, (255, 255, 255))
 
-#Functions for the loop
+# Setting up and initializing the rectangles
+case_input_box.rect.render_text()
+case_ruling_input.rect.render_text()
+criminal_or_civil_input.rect.render_text()
+specify_case_type_input.rect.render_text()
+ruling_court_input.rect.render_text()
+circuit_name_input.rect.render_text()
 
-# Rectangle Collisions
-
-# def text_return_to_base():
-#     text = ""
-#     return text
-
-
-# def create_spreadsheet():
-
-
-def case_name(text):
+def case_name(text, event.type):
+    case_input_rect = case_input_box.rect.update(event.type)
     case_name_text = text
-    name_text_surface = my_font.render(case_name_text, True, (255, 255, 255))
-    return name_text_surface and case_input_rect
+    return case_input_rect and case_name_text
 
 
-def case_ruling(text):
+def case_ruling(text, event.type):
+    ruling_text_surface = case_ruling_input.rect.update(event.type)
     case_ruling_text = text
-    ruling_text_surface = my_font.render(case_ruling_text, True, (255, 255, 255))
     return ruling_text_surface and case_ruling_text
 
-def criminal_or_civil_type(text):
+
+def criminal_or_civil_type(text, event.type):
+    criminal_or_civil_text_surface = criminal_or_civil_input.rect.render_text()
+    criminal_or_civil_input.rect.update(event.type)
     criminal_or_civil_text = text
-    criminal_or_civil_text_surface = my_font.render(criminal_or_civil_text, True, (255, 255, 255))
     return criminal_or_civil_text_surface and criminal_or_civil_text
 
-def specify_case_type(text, criminal_or_civil_text):
+def specify_case_type(text, criminal_or_civil_text, event.type):
     if criminal_or_civil_text == "Civil":
+        civil_case_text_surface = specify_case_type_input.rect.update(event.type)
         civil_case_type_text = text
-        civil_case_text_surface = my_font.render(civil_case_type_text, True, (255, 255, 255))
         return civil_case_text_surface and civil_case_type_text
     else: # Could also create different functions within functions and then just important these functions within the parameters
-        criminal_case_type = pygame.Rect(100, 200, 10, 130)
-        pygame.draw.rect(screen, color, criminal_case_type, 2)
-        criminal_case_non_surface = ("Criminal Case Type: ", True, (255, 255, 255))
+        criminal_case_text_surface = specify_case_type_input.rect.update(event.type)
         criminal_case_type_text = text
-        criminal_case_text_surface = my_font.render(criminal_case_type_text, True, (255, 255, 255))
         return criminal_case_non_surface and criminal_case_text_surface
 
 
-def ruling_court(text):
+def ruling_court(text, event.type):
+    ruling_court_text_surface = ruling_court_input.rect.update(event.type)
     ruling_court_text = text
-    ruling_court_text_surface = my_font.render(ruling_court_text, True, (255, 255, 255))
-    return ruling_court_rect and ruling_court_text_surface and ruling_court_text
+    return ruling_court_text_surface and ruling_court_text
 
 
-def circuit_name(text):
+def circuit_name(text, event.type):
+    circuit_name_text_surface = circuit_name_input.rect.update(event.type)
     circuit_name_text = text
     circuit_name_text_surface = my_font.render(circuit_name_text, True, (255, 255, 255))
     return circuit_name_text_surface and circuit_name_text
 
-def create_text(text, rectangle_collided_with, unicode):
-    text += unicode
-    # add a line of code where the text will be added to the rectangle through this function
-    # like in the normal code, it will be if collidepoint add the text into the rectangle you want to add it into
 
-# def go_to_new_rectangle:
-    # If you are moving to a new rectangle, keep the text in the old rectangle, and nothing will happen
 
-name_text_input = case_name(text)
-ruling_text_surface = case_ruling(text)
-criminal_or_civil = criminal_or_civil_type(text)
-specify_case_type_text = specify_case_type(text)
-ruling_court(text)
-circuit_name(text)
 
 
 # -------- Main Program Loop -----------
@@ -156,42 +152,48 @@ while run:
             else:
                 text += event.unicode
 
-        if end_title_click and input_screen:
+        if end_title_click and input_screen and finish_input_case:
             # Rectangle 1, case name
             case_input_rect = pygame.Rect(100, 200, 10, 70)
             pygame.draw.rect(screen, color, case_input_rect, 2)
             if case_input_rect.collidepoint(pos):
-                name_text_input = case_name(text)
+                name_text_input = case_name(text, event.type)
 
             # Rectangle 2, ruling input
             ruling_input_rect = pygame.Rect(200, 200, 100, 72)
             pygame.draw.rect(screen, color, ruling_input_rect, 2)
             if ruling_input_rect.collidepoint(pos):
-                ruling_text_surface = case_ruling(text)
+                ruling_text_surface = case_ruling(text, event.type)
 
             # Rectangle 3, criminal or civil
             case_type_rect = pygame.Rect(100, 200, 10, 110)
             pygame.draw.rect(screen,color, case_type_rect,2 )
             if case_type_rect.collidepoint(pos):
-                criminal_or_civil = case_type(text)
+                criminal_or_civil = case_type(text, event.type)
 
-            # Rectangle 4, what was the ruling court?
+            # Rectangle 4, Specify Case Type
+            specify_case_type_rect = pygame.Rect(100, 200, 10, 130)
+            pygame.draw.rect(screen, color, specify_case_type_rect, 2)
+            if specify_case_type_rect.collidepoint(pos):
+                specify_case_type(text, criminal_or_civil_text, event.type)
+
+            # Rectangle 5, what was the ruling court?
             ruling_court_rect = pygame.Rect(100, 200, 10, 150)
             pygame.draw.rect(screen, color, ruling_court_rect, 2)
             if ruling_court_rect.collidepoint(pos):
-                ruling_court(text)
-            # Rectangle 5 - what was the circuit, if applicable
+                ruling_court(text, event.type)
+
+            # Rectangle 6 - what was the circuit, if applicable
             circuit_name_rect = pygame.Rect(100, 200, 10, 170)
             pygame.draw.rect(screen, color, circuit_name_rect, 2)
             if circuit_name_rect.collidepoint(pos):
-                circuit_name(text)
+                circuit_name(text, event.type)
 
-            specify_case_type_rect = pygame.Rect(100, 200, 10, 190)
-            pygame.draw.rect(screen, color, specify_case_type_rect, 2)
-            if specify_case_type_rect.collidepoint(pos):
-                specify_case_type(text, criminal_or_civil_text)
 
-            finish_input_case = True
+            if id.rect.collidepoint(100, 190):
+                finish_input_case = True
+                input_screen = False
+                title_screen = True
             data = [
                 ["Case Name", "Ruling", "Case Type", "Civil Case Type", "Criminal Case Type", "Ruling Court", "Circuit Name"],
                 [case_name_text, case_ruling_text, criminal_or_civil_text, civil_case_type_text, criminal_case_type_text, ruling_court_text,  circuit_name_text]
@@ -201,8 +203,6 @@ while run:
             workbook.save(sheet.xlsx)
             spreadsheet_created = True
             display_case_spreadsheet = (sheet.xlsx, True, (255, 255, 255))
-
-
 
         if event.type == pygame.QUIT:  # If user clicked close
             run = False
@@ -246,8 +246,8 @@ while run:
         screen.blit(s.image, s.rect)
 
 
-    if end_title_click and spreadsheet_created and :
-        screen.blit(display_case_spreadsheet)
+    # if end_title_click and spreadsheet_created and :
+    #     screen.blit(display_case_spreadsheet)
     # if finish_input_case:
         #Give an option to play a "game"
         # Give an option to view the spreadsheet
