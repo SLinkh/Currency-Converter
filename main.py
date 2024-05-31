@@ -78,8 +78,8 @@ case_input = my_font.render("What was the name of this case? ", True, (255, 255,
 ruling_input = my_font.render("What was the ruling in this case?", True, (255, 255, 255))
 case_type = my_font.render("What type of sector of law was this case: Criminal or Civil: ", True, (255, 255, 255))
 specify_case_type = my_font.render("What type of criminal or civil case is this case?", True, (255, 255, 255))
-ruling_court = my_font.render("What was the ruling court in this case? ", True, (255, 255, 255))
-circuit_name = my_font.render("What circuit did this case take place in? ", True, (255, 255, 255))
+ruling_court_instruction = my_font.render("What was the ruling court in this case? ", True, (255, 255, 255))
+circuit_name_instruction = my_font.render("What circuit did this case take place in? ", True, (255, 255, 255))
 
 # Setting up and initializing the rectangles
 case_input_box.render_text()
@@ -120,7 +120,6 @@ while run:
         case_name_text = text
         return case_input_rect and case_name_text
 
-
     def case_ruling():
         ruling_text_surface = case_ruling_input.rect.update(event.type)
         case_ruling_text = text
@@ -139,7 +138,7 @@ while run:
             civil_case_text_surface = specify_case_type_input.rect.update(event.type)
             civil_case_type_text = text
             return civil_case_text_surface and civil_case_type_text
-        else:  # Could also create different functions within functions and then just important these functions within the parameters
+        else:
             criminal_case_text_surface = specify_case_type_input.rect.update(event.type)
             criminal_case_type_text = text
             return criminal_case_type_text and criminal_case_text_surface
@@ -162,37 +161,37 @@ while run:
         case_input_rect = pygame.Rect(100, 200, 10, 70)
         pygame.draw.rect(screen, color, case_input_rect, 2)
         if case_input_rect.collidepoint(pos):
-            name_text_input = case_name(text, event.type)
+            name_text_input = case_name(event.type)
 
         # Rectangle 2, ruling input
-        ruling_input_rect = pygame.Rect(200, 200, 100, 72)
-        pygame.draw.rect(screen, color, ruling_input_rect, 2)
-        if ruling_input_rect.collidepoint(pos):
-            ruling_text_surface = case_ruling(text, event.type)
+        case_ruling_input = pygame.Rect(200, 200, 100, 72)
+        pygame.draw.rect(screen, color, case_ruling_input, 2)
+        if case_ruling_input.collidepoint(pos):
+            ruling_text_surface = case_ruling(event.type)
 
         # Rectangle 3, criminal or civil
-        case_type_rect = pygame.Rect(100, 200, 10, 110)
-        pygame.draw.rect(screen,color, case_type_rect,2 )
-        if case_type_rect.collidepoint(pos):
-            criminal_or_civil = case_type(text, event.type)
+        criminal_or_civil_input = pygame.Rect(100, 200, 10, 110)
+        pygame.draw.rect(screen,color, criminal_or_civil_input,2 )
+        if criminal_or_civil_input.collidepoint(pos):
+            criminal_or_civil = case_type(event.type)
 
         # Rectangle 4, Specify Case Type
         specify_case_type_rect = pygame.Rect(100, 200, 10, 130)
         pygame.draw.rect(screen, color, specify_case_type_rect, 2)
         if specify_case_type_rect.collidepoint(pos):
-            specify_case_type(text, criminal_or_civil_text, event.type)
+            specify_case_type(criminal_or_civil_text, event.type)
 
         # Rectangle 5, what was the ruling court?
-        ruling_court_rect = pygame.Rect(100, 200, 10, 150)
-        pygame.draw.rect(screen, color, ruling_court_rect, 2)
-        if ruling_court_rect.collidepoint(pos):
-            ruling_court(text, event.type)
+        ruling_court_input = pygame.Rect(100, 200, 10, 150)
+        pygame.draw.rect(screen, color, ruling_court_input, 2)
+        if ruling_court_input.collidepoint(pos):
+            ruling_court(event.type)
 
         # Rectangle 6 - what was the circuit, if applicable
-        circuit_name_rect = pygame.Rect(100, 200, 10, 170)
-        pygame.draw.rect(screen, color, circuit_name_rect, 2)
-        if circuit_name_rect.collidepoint(pos):
-            circuit_name(text, event.type)
+        circuit_name_input = pygame.Rect(100, 200, 10, 170)
+        pygame.draw.rect(screen, color, circuit_name_input, 2)
+        if circuit_name_input.collidepoint(pos):
+            circuit_name(event.type)
 
 
         if id.rect.collidepoint(100, 190):
@@ -223,27 +222,27 @@ while run:
 
         # Blitting Input 1
         screen.blit(case_input, (0, 10))
-        screen.blit(name_text_input, case_input_box)
+        screen.blit(screen, case_input_box)
 
         # Blitting Input 2
         screen.blit(ruling_input, (0, 30))
-        screen.blit(case_ruling_input, ruling_input_rect)
+        screen.blit(screen, case_ruling_input)
 
         # Blitting Input 3
         screen.blit(case_type, (0, 50))
-        screen.blit(criminal_or_civil, case_type_rect)
+        screen.blit(screen, criminal_or_civil_input)
 
         # Blitting Input 4
-        screen.blit(ruling_court, (0, 70))
-        screen.blit(ruling_court_rect, (50, 70))
+        screen.blit(ruling_court_instruction, (0, 70))
+        screen.blit(screen, ruling_court_input)
 
         # Blitting Input 5
-        screen.blit(circuit_name, (0, 90))
-        screen.blit(circuit_name_rect, (50, 90))
+        screen.blit(circuit_name_instruction, (0, 90))
+        screen.blit(screen, circuit_name_input)
 
         #Blitting Input 6
-        screen.blit(specify_case_type, (0, 110))
-        screen.blit()
+        # screen.blit(specify_case_type, (0, 110))
+        # screen.blit()
     if name_text_input != " " and ruling_text_surface != " " and criminal_or_civil != " " and ruling_court_rect != " " and circuit_name != " " and specify_case_type != " ":
         screen.blit()
     if not end_title_click:
