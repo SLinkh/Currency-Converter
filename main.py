@@ -18,6 +18,7 @@ input_rect = pygame.Rect(200,200,200,72)
 color = pygame.Color('lightskyblue3')
 text = ""
 input_active = True
+second_screen = False
 
 
 
@@ -43,20 +44,21 @@ ruling_court_input = TextInputBox(100, 280, 10, my_font)
 circuit_name_input = TextInputBox(100, 300, 10, my_font)
 
 
-v = View_Case_Button(135, 220)
+v = View_Case_Button(135, 280)
 spreadsheet_created = False
 
 # set up variables for the display
 
-size = (400, 300)
+size = (500, 400)
 screen = pygame.display.set_mode(size)
 end_title_click = False
 name = "JSTOR Law Database"
-number_of_enter = 0
+name_display = my_font.render(name, True, (0, 0, 0))
 
-i.rect = pygame.draw.rect(screen, color, i, 2)
-id.rect = pygame.draw.rect(screen, color, id, 2)
-v.rect = pygame.draw.rect(screen, color, v, 2)
+
+# i.rect = pygame.draw.rect(screen, color, i, 2)
+# id.rect = pygame.draw.rect(screen, color, id, 2)
+# v.rect = pygame.draw.rect(screen, color, v, 2)
 pygame.display.flip()
 
 name_text_input = (" ")
@@ -98,21 +100,21 @@ while run:
         pos = pygame.mouse.get_pos()
         if event.type == pygame.MOUSEBUTTONDOWN and not end_title_click:
             if s.rect.collidepoint(pos):
-                finish_input_case = False
                 end_title_click = True
-            if i.rect.collidepoint(pos) and end_title_click:
+                second_screen = True
+        if event.type == pygame.MOUSEBUTTONDOWN and second_screen:
+            if i.rect.collidepoint(pos):
                 input_screen = True
-        elif event.type == pygame.MOUSEBUTTONDOWN:
-            input_active = True
-            text = ""
-        elif event.type == pygame.KEYDOWN and input_active:
-            if event.key == pygame.K_RETURN:
-                input_active = False
-                number_of_enter += 1
-            elif event.key == pygame.K_BACKSPACE:
-                text = text[:-1]
-            else:
-                text += event.unicode
+                second_screen = False
+            elif v.rect.collidepoint(pos):
+                second_screen = False
+        if event.type == pygame.MOUSEBUTTONDOWN and input_screen:
+            if id.rect.collidepoint(pos):
+                second_screen = True
+                input_screen = False
+        # if event.type == pygame.MOUSEBUTTONDOWN and input_screen:
+
+
 
 
     def case_name():
@@ -211,14 +213,18 @@ while run:
     if event.type == pygame.QUIT:  # If user clicked close
         run = False
 
-    screen.fill((100, 100, 100))
-    if not input_screen:
-        screen.fill((100, 100, 100))
+    screen.fill((255, 100, 100))
+
+    if not end_title_click:
+        screen.blit(s.image, s.rect)
+
+    if not input_screen and second_screen:
+        screen.fill((255, 100, 100))
         screen.blit(i.image, i.rect)
         screen.blit(v.image, v.rect)
 
-    if input_screen == True:
-        screen.fill((0, 0, 0))
+    if input_screen and not second_screen:
+        screen.fill((255, 0, 0))
 
         # Blitting Input 1
         screen.blit(case_input, (0, 10))
@@ -244,18 +250,12 @@ while run:
         # screen.blit(specify_case_type, (0, 110))
         # screen.blit()
     if name_text_input != " " and ruling_text_surface != " " and criminal_or_civil != " " and ruling_court_rect != " " and circuit_name != " " and specify_case_type != " ":
-        screen.blit()
+        screen.blit(id.screen, id.rect)
     if not end_title_click:
         screen.blit(title_screen, (35, 75))
         screen.blit(s.image, s.rect)
 
 
-    # if end_title_click and spreadsheet_created and :
-    #     screen.blit(display_case_spreadsheet)
-    # if finish_input_case:
-        #Give an option to play a "game"
-        # Give an option to view the spreadsheet
-        # Give an option to add another case
     pygame.display.update()
 
 # Once we have exited the main program loop we can stop the game engine:

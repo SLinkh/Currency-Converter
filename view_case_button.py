@@ -9,7 +9,7 @@ class View_Case_Button:
     def __init__(self, x, y):
         self.x = x
         self.y = y
-        self.image = pygame.image.load('View Case Database Button.png')
+        self.image = pygame.image.load('View Case Database Button (1).png')
         self.case_spreadsheet = openpyxl.Workbook()
         self.sheet = self.case_spreadsheet.active
         self.mouse_pos = pygame.mouse.get_pos()
