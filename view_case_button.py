@@ -5,7 +5,7 @@ workbook = openpyxl.Workbook()
 # Select the default sheet (usually named 'Sheet')
 sheet = workbook.active
 
-class View_Case_Button:
+class ViewCaseButton:
     def __init__(self, x, y):
         self.x = x
         self.y = y

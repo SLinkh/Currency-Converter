@@ -1,6 +1,6 @@
 import pygame
 
-class Start_Searching_Button:
+class StartSearchingButton:
 
     def __init__(self, x, y):
         self.x = x

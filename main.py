@@ -1,17 +1,19 @@
 import pygame
 import openpyxl
-from start_searching_button import Start_Searching_Button
+from start_searching_button import StartSearchingButton
 from input_box import TextInputBox
-from input_box_button import Input_Box_Button
-from view_case_button import View_Case_Button
-from input_done import Input_Done
-from jail import Jail
-from trump import Trump
-from trumpmugshot import Trump_Mugshot
-from finish_viewing import Finish_Viewing
+from input_box_button import InputBoxButton
+from view_case_button import ViewCaseButton
+from input_done import InputDone
+from finish_viewing import FinishViewing
 
 # Initialize Pygame
 pygame.init()
+
+# Constants
+WHITE = (255, 255, 255)
+RED = (255, 0, 0)
+LIGHT_RED = (255, 100, 100)
 
 # Set up the display window
 size = (500, 400)
@@ -22,29 +24,24 @@ pygame.display.set_caption("AP CSP Pygame!")
 my_font = pygame.font.SysFont('Arial', 15)
 title_font = pygame.font.SysFont('Arial', 35)
 
-
 # Set up the clock
 clock = pygame.time.Clock()
 
 # Create a new Excel workbook and select the default sheet
 workbook = openpyxl.Workbook()
 sheet = workbook.active
-# create image options
-imgOptions = ImageOrPrintOptions()
-imgOptions.setSaveFormat(SaveFormat.SVG)
 
-# load the worksheet to be rendered
-sheet = workbook.getWorksheets().get(0)
-
-# create sheet render object
-sr = SheetRender(sheet, imgOptions)
+# Headers for Excel sheet
+if sheet.max_row == 1:
+    headers = ["Case Name", "Ruling", "Case Type", "Civil Case Type", "Criminal Case Type", "Ruling Court", "Circuit Name"]
+    sheet.append(headers)
 
 # Set up custom objects
-id_button = Input_Done(300, 300)
-start_button = Start_Searching_Button(135, 200)
-input_button = Input_Box_Button(135, 200)
-view_button = View_Case_Button(135, 280)
-finish_viewing_button = Finish_Viewing(250, 200)
+id_button = InputDone(300, 300)
+start_button = StartSearchingButton(135, 200)
+input_button = InputBoxButton(135, 200)
+view_button = ViewCaseButton(135, 280)
+finish_viewing_button = FinishViewing(250, 200)
 
 case_input_box = TextInputBox(0, 30, 300, 30, my_font)
 case_ruling_input = TextInputBox(0, 90, 300, 30, my_font)
@@ -61,12 +58,41 @@ run = True
 view_cases = False
 
 # Setting up statements to be blit later
-case_input = my_font.render("What was the name of this case?", True, (255, 255, 255))
-ruling_input = my_font.render("What was the ruling in this case?", True, (255, 255, 255))
-case_type = my_font.render("What type of sector of law was this case: Criminal or Civil?", True, (255, 255, 255))
-specify_case_type = my_font.render("What type of criminal or civil case is this case?", True, (255, 255, 255))
-ruling_court_instruction = my_font.render("What was the ruling court in this case?", True, (255, 255, 255))
-circuit_name_instruction = my_font.render("What circuit did this case take place in?", True, (255, 255, 255))
+case_input = my_font.render("What was the name of this case?", True, WHITE)
+ruling_input = my_font.render("What was the ruling in this case?", True, WHITE)
+case_type = my_font.render("What type of sector of law was this case: Criminal or Civil?", True, WHITE)
+specify_case_type = my_font.render("What type of criminal or civil case is this case?", True, WHITE)
+ruling_court_instruction = my_font.render("What was the ruling court in this case?", True, WHITE)
+circuit_name_instruction = my_font.render("What circuit did this case take place in?", True, WHITE)
+
+def handle_mouse_button_down(pos):
+    global end_title_click, second_screen, input_screen, view_cases
+    if not end_title_click:
+        if start_button.rect.collidepoint(pos):
+            end_title_click = True
+            second_screen = True
+    elif second_screen:
+        if input_button.rect.collidepoint(pos):
+            input_screen = True
+            second_screen = False
+        elif view_button.rect.collidepoint(pos):
+            second_screen = False
+            view_cases = True
+    elif input_screen:
+        if id_button.rect.collidepoint(pos):
+            save_case_data()
+
+def save_case_data():
+    data = [
+        [case_input_box.get_text(), case_ruling_input.get_text(), criminal_or_civil_input.get_text(), specify_case_type_input.get_text(),
+        ruling_court_input.get_text(), circuit_name_input.get_text()]
+    ]
+    for row in data:
+        sheet.append(row)
+    workbook.save('case_data.xlsx')
+    global input_screen, second_screen
+    input_screen = False
+    second_screen = True
 
 # Main program loop
 while run:
@@ -80,31 +106,7 @@ while run:
             run = False
 
         if event.type == pygame.MOUSEBUTTONDOWN:
-            if not end_title_click:
-                if start_button.rect.collidepoint(pos):
-                    end_title_click = True
-                    second_screen = True
-            elif second_screen:
-                if input_button.rect.collidepoint(pos):
-                    input_screen = True
-                    second_screen = False
-                elif view_button.rect.collidepoint(pos):
-                    second_screen = False
-                    view_cases = True
-            elif input_screen:
-                if id_button.rect.collidepoint(pos):
-                    # Save inputs to spreadsheet
-                    data = [
-                        ["Case Name", "Ruling", "Case Type", "Civil Case Type", "Criminal Case Type", "Ruling Court",
-                         "Circuit Name"],
-                        [case_input_box.get_text(), case_ruling_input.get_text(), criminal_or_civil_input.get_text(), specify_case_type_input.get_text(),
-                        ruling_court_input.get_text(), circuit_name_input.get_text()]
-                        ]
-                    for row in data:
-                        sheet.append(row)
-                    workbook.save('case_data.xlsx')
-                    input_screen = False
-                    second_screen = True
+            handle_mouse_button_down(pos)
 
         # Handle input box events only when in input screen
         if input_screen:
@@ -116,18 +118,18 @@ while run:
             circuit_name_input.handle_event(event)
 
     # Clear the screen
-    screen.fill((255, 100, 100))
+    screen.fill(LIGHT_RED)
 
     if not end_title_click:
         screen.blit(start_button.image, start_button.rect)
-        screen.blit(title_font.render("JSTOR Law Database", True, (255, 255, 255)), (35, 75))
+        screen.blit(title_font.render("JSTOR Law Database", True, WHITE), (35, 75))
 
     if second_screen:
         screen.blit(input_button.image, input_button.rect)
         screen.blit(view_button.image, view_button.rect)
 
     if input_screen:
-        screen.fill((255, 0, 0))
+        screen.fill(RED)
 
         # Blitting input texts and boxes
         screen.blit(case_input, (10, 10))
@@ -154,13 +156,10 @@ while run:
         circuit_name_input.update()
         circuit_name_input.draw(screen)
 
-
-        if case_input_box.get_text() != "" and case_ruling_input.get_text() != "" and criminal_or_civil_input.get_text() != "" and specify_case_type_input.get_text() != "" and ruling_court_input.get_text() != "" and circuit_name_input.get_text() != "":
+        if case_input_box.get_text() and case_ruling_input.get_text() and criminal_or_civil_input.get_text() and specify_case_type_input.get_text() and ruling_court_input.get_text() and circuit_name_input.get_text():
             screen.blit(id_button.image, id_button.rect)
-
-        if view_cases == True:
-
 
     pygame.display.update()
 
 pygame.quit()
+

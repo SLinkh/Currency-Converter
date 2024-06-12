@@ -1,5 +1,5 @@
 import pygame
-class Input_Box_Button:
+class InputBoxButton:
 
     def __init__(self, x, y):
         self.x = x

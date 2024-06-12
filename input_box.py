@@ -35,9 +35,7 @@ class TextInputBox:
             self.rect.w = width
 
         def draw(self, screen):
-            # Blit the text.
             screen.blit(self.txt_surface, (self.rect.x + 5, self.rect.y + 5))
-            # Blit the rect.
             pygame.draw.rect(screen, self.color, self.rect, 2)
 
         def get_text(self):
